@@ -1,0 +1,35 @@
+{
+  "name": "auto-playwright-choucair",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reto Tecnico Playwright - Choucair | Automatizacion E2E con patron Page Object Model",
+  "type": "commonjs",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:hu01": "playwright test --project=HU-01-Registro",
+    "test:hu02": "playwright test --project=HU-02-Compra",
+    "report": "playwright show-report reports/html",
+    "trace": "playwright show-trace",
+    "typecheck": "tsc --noEmit",
+    "codegen": "playwright codegen https://demowebshop.tricentis.com/"
+  },
+  "keywords": [
+    "playwright",
+    "pom",
+    "e2e",
+    "typescript",
+    "qa-automation"
+  ],
+  "author": "QA Automation",
+  "license": "MIT",
+  "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.1",
+    "dotenv": "^18.0.0",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,9 @@
+export { HomePage } from './HomePage';
+export { RegisterPage } from './RegisterPage';
+export { RegisterResultPage } from './RegisterResultPage';
+export { LoginPage } from './LoginPage';
+export { CategoryPage } from './CategoryPage';
+export { ProductDetailPage } from './ProductDetailPage';
+export { ShoppingCartPage } from './ShoppingCartPage';
+export { CheckoutPage } from './CheckoutPage';
+export { CheckoutCompletedPage } from './CheckoutCompletedPage';

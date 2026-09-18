@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "noEmit": true,
+    "paths": {
+      "@core/*":       ["./src/core/*"],
+      "@pages/*":      ["./src/pages/*"],
+      "@components/*": ["./src/components/*"],
+      "@data/*":       ["./src/data/*"],
+      "@fixtures/*":   ["./src/fixtures/*"],
+      "@utils/*":      ["./src/utils/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts", "playwright.config.ts"],
+  "exclude": ["node_modules", "reports", "test-results"]
+}
