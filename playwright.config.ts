@@ -58,7 +58,12 @@ export default defineConfig({
     locale: 'en-US',
     testIdAttribute: 'data-testid',
 
-    /* Evidencia automatica: solo cuando aporta valor al analisis del fallo. */
+    /*
+     * Evidencia solo ante un fallo REAL (bug): `only-on-failure` dispara la
+     * captura cuando una asercion no se cumple. Los escenarios negativos que
+     * verifican un rechazo esperado terminan en verde y, por diseno, no
+     * generan captura: el rechazo es el comportamiento correcto, no un bug.
+     */
     screenshot: 'only-on-failure',
     video: VIDEO_ENABLED ? 'retain-on-failure' : 'off',
     trace: 'retain-on-failure',

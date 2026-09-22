@@ -56,6 +56,14 @@ export class RegisterPage extends BasePage {
     return (await this.validationErrors.allTextContents()).map((t) => t.trim()).filter(Boolean);
   }
 
+  /** Verifica que la tienda rechace el registro con el motivo esperado. */
+  async expectValidationError(expected: string): Promise<void> {
+    await expect(
+      this.validationErrors.first(),
+      `La aplicacion no rechazo el registro con el mensaje "${expected}"`,
+    ).toContainText(expected);
+  }
+
   async expectNoValidationErrors(): Promise<void> {
     await expect(
       this.validationErrors,

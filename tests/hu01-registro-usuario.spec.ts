@@ -1,6 +1,6 @@
 import { test, expect } from '../src/fixtures/pages.fixture';
 import { UserBuilder } from '../src/data/builders/UserBuilder';
-import { EXPECTED_MESSAGES } from '../src/data/constants/checkout.data';
+import { EXPECTED_ERRORS, EXPECTED_MESSAGES } from '../src/data/constants/checkout.data';
 import { SessionStore } from '../src/utils/SessionStore';
 
 /**
@@ -11,7 +11,10 @@ import { SessionStore } from '../src/utils/SessionStore';
  * y sirva como evidencia de la trazabilidad HU <-> automatizacion.
  */
 test.describe('HU-01 | Registro de usuario', () => {
-  test('Un usuario nuevo se registra y el sistema confirma "Your registration completed"', async ({
+  /* El escenario negativo reutiliza el correo creado por el exitoso. */
+  test.describe.configure({ mode: 'serial' });
+
+  test('Escenario exitoso | Un usuario nuevo se registra y el sistema confirma "Your registration completed"', async ({
     homePage,
     registerPage,
     registerResultPage,
@@ -47,6 +50,33 @@ test.describe('HU-01 | Registro de usuario', () => {
     await testInfo.attach('usuario-registrado.json', {
       body: JSON.stringify(user, null, 2),
       contentType: 'application/json',
+    });
+  });
+
+  /**
+   * Escenario negativo: la prueba PASA cuando la tienda rechaza el registro.
+   * Si algun dia el rechazo no ocurriera, la prueba falla y ahi si se
+   * adjunta la captura, porque entonces si habria un bug real.
+   */
+  test('Escenario fallido | El sistema rechaza el registro con un correo ya existente', async ({
+    registeredUser,
+    registerPage,
+  }) => {
+    const usuarioDuplicado = UserBuilder.aUser().withEmail(registeredUser.email).build();
+
+    await test.step('DADO QUE abro el formulario de registro', async () => {
+      await registerPage.open();
+    });
+
+    await test.step(`CUANDO ingreso un correo ya registrado (${registeredUser.email})`, async () => {
+      await registerPage.register(usuarioDuplicado);
+    });
+
+    await test.step('ENTONCES el sistema NO completa el registro y muestra el motivo', async () => {
+      await registerPage.expectValidationError(EXPECTED_ERRORS.emailAlreadyExists);
+      expect(registerPage.currentUrl(), 'La tienda no debio salir del registro').toContain(
+        '/register',
+      );
     });
   });
 });

@@ -1,6 +1,8 @@
 import { test } from '../src/fixtures/pages.fixture';
 import {
+  EXPECTED_ERRORS,
   EXPECTED_MESSAGES,
+  INVALID_PASSWORD,
   PRODUCT_TO_BUY,
   VISA_CARD,
   buildBillingAddress,
@@ -13,7 +15,7 @@ import {
  * el orden lo garantiza `dependencies` en playwright.config.ts.
  */
 test.describe('HU-02 | Proceso de compra', () => {
-  test('Compra completa con tarjeta de credito Visa hasta la confirmacion de la orden', async ({
+  test('Escenario exitoso | Compra completa con tarjeta de credito Visa hasta la confirmacion de la orden', async ({
     registeredUser,
     homePage,
     loginPage,
@@ -105,6 +107,32 @@ test.describe('HU-02 | Proceso de compra', () => {
       if (orderNumber) {
         testInfo.annotations.push({ type: 'Numero de orden', description: orderNumber });
       }
+    });
+  });
+
+  /**
+   * Escenario negativo: sin autenticacion valida no debe iniciarse la compra.
+   * La prueba PASA porque la tienda bloquea el ingreso; solo fallaria (y solo
+   * entonces se guarda la captura) si dejara entrar con una clave incorrecta.
+   */
+  test('Escenario fallido | El sistema rechaza el ingreso con credenciales invalidas', async ({
+    registeredUser,
+    homePage,
+    loginPage,
+  }) => {
+    await test.step('DADO QUE ingreso a la aplicacion', async () => {
+      await homePage.open();
+    });
+
+    await test.step('CUANDO me autentico con una contrasena incorrecta', async () => {
+      await homePage.header.goToLogin();
+      await loginPage.waitUntilLoaded();
+      await loginPage.login({ email: registeredUser.email, password: INVALID_PASSWORD });
+    });
+
+    await test.step('ENTONCES el sistema NO inicia sesion y muestra el error', async () => {
+      await loginPage.expectLoginError(EXPECTED_ERRORS.loginUnsuccessful);
+      await loginPage.header.expectUserNotLoggedIn();
     });
   });
 });

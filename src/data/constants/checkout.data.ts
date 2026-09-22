@@ -37,6 +37,19 @@ export const EXPECTED_MESSAGES = Object.freeze({
 });
 
 /**
+ * Mensajes de rechazo que la aplicacion DEBE mostrar en los escenarios
+ * negativos. Que aparezcan es el resultado esperado: la prueba pasa porque
+ * el control funciona, no porque la compra o el registro se completen.
+ */
+export const EXPECTED_ERRORS = Object.freeze({
+  emailAlreadyExists: 'The specified email already exists',
+  loginUnsuccessful: 'Login was unsuccessful',
+});
+
+/** Contrasena incorrecta usada para el escenario negativo de autenticacion. */
+export const INVALID_PASSWORD = 'ClaveIncorrecta#000';
+
+/**
  * Construye la direccion de entrega a partir del usuario registrado en HU-01,
  * de modo que los datos del checkout sean coherentes con la cuenta.
  * Los campos no solicitados por la HU se omiten para que la tienda

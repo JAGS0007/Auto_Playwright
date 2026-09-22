@@ -62,6 +62,12 @@ export class HeaderComponent {
     await expect(this.logoutLink, 'No se ofrece la opcion "Log out"').toBeVisible();
   }
 
+  /** Verifica que NO haya sesion activa (escenario negativo de autenticacion). */
+  async expectUserNotLoggedIn(): Promise<void> {
+    await expect(this.logoutLink, 'La tienda dejo la sesion iniciada').toBeHidden();
+    await expect(this.loginLink, 'La cabecera no ofrece "Log in"').toBeVisible();
+  }
+
   async expectCartItemsCount(expected: number): Promise<void> {
     await expect(this.cartQuantity, 'El contador del carrito no coincide').toHaveText(
       `(${expected})`,

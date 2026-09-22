@@ -3,10 +3,16 @@
 Automatización E2E de **DemoWebShop** (https://demowebshop.tricentis.com/) con
 **Playwright + TypeScript** aplicando el patrón **Page Object Model**.
 
-| HU | Escenario | Criterio de aceptación verificado |
-|----|-----------|-----------------------------------|
-| HU-01 | Registro de usuario | `Your registration completed` |
-| HU-02 | Proceso de compra con tarjeta Visa | `Your order has been successfully processed!` |
+| HU | Escenario | Resultado verificado |
+|----|-----------|----------------------|
+| HU-01 | ✅ Exitoso — registro de usuario nuevo | `Your registration completed` |
+| HU-01 | ⛔ Fallido — correo ya registrado | `The specified email already exists` |
+| HU-02 | ✅ Exitoso — compra con tarjeta Visa | `Your order has been successfully processed!` |
+| HU-02 | ⛔ Fallido — credenciales inválidas | `Login was unsuccessful` |
+
+> Los escenarios ⛔ **terminan en verde**: la prueba pasa porque la aplicación
+> rechaza correctamente. Solo se genera captura de pantalla cuando una
+> aserción no se cumple, es decir, ante un **bug** real.
 
 ---
 
@@ -134,6 +140,8 @@ de la categoría.
 
 ### HU-01 — Registro
 
+**Escenario exitoso**
+
 | Paso de la HU | Verificación automatizada |
 |---------------|---------------------------|
 | Ingreso a la aplicación | Título contiene `Demo Web Shop` |
@@ -142,7 +150,17 @@ de la categoría.
 | **Mensaje esperado** | `.result` = `Your registration completed` |
 | Verificación adicional | La sesión queda iniciada con la cuenta creada |
 
+**Escenario fallido — correo ya registrado**
+
+| Paso | Verificación automatizada |
+|------|---------------------------|
+| Reintento con el correo del escenario exitoso | La tienda rechaza el registro |
+| **Mensaje esperado** | `The specified email already exists` |
+| Verificación adicional | La navegación permanece en `/register`: no se creó la cuenta |
+
 ### HU-02 — Compra
+
+**Escenario exitoso**
 
 | Paso de la HU | Verificación automatizada |
 |---------------|---------------------------|
@@ -156,6 +174,14 @@ de la categoría.
 | Confirmación | Se valida que la orden lleve el producto y el medio de pago correctos |
 | **Mensaje esperado** | `Your order has been successfully processed!` |
 | Evidencia extra | Número de orden y total anexados al reporte |
+
+**Escenario fallido — credenciales inválidas**
+
+| Paso | Verificación automatizada |
+|------|---------------------------|
+| Ingreso con la contraseña incorrecta | La tienda no autentica |
+| **Mensaje esperado** | `Login was unsuccessful` |
+| Verificación adicional | La cabecera sigue ofreciendo `Log in`: no hay sesión activa |
 
 > La subcategoría `Notebooks` se eligió deliberadamente: al ser producto físico,
 > el checkout incluye los pasos de dirección y método de envío, ejercitando el
@@ -172,5 +198,17 @@ de la categoría.
 | Screenshot de fallo | `test-results/**` |
 | Trace navegable | `npx playwright show-trace <ruta>` |
 
-Screenshot, video y trace se retienen **solo ante fallo**: evidencia útil sin
-inflar la ejecución exitosa.
+### Política de evidencia
+
+Screenshot, video y trace se retienen **solo ante fallo** (`only-on-failure` /
+`retain-on-failure`). La consecuencia práctica es la que importa:
+
+| Situación | ¿Genera captura? |
+|-----------|------------------|
+| Escenario exitoso en verde | No |
+| Escenario negativo en verde — la app rechazó como debía | **No** (es el comportamiento correcto, no un bug) |
+| Cualquier aserción incumplida | **Sí** — screenshot + trace navegable |
+
+Verificado empíricamente: una corrida de los 4 escenarios en verde deja
+`test-results/` sin un solo `.png`; al forzar una aserción incumplida aparece
+`test-failed-1.png` junto al `trace.zip`.
